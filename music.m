@@ -1,5 +1,7 @@
 function numSongs = music(dataDirectory);
 
+    addpath('~/work/common');
+    addpath('~/work/InfoGeomCode');
 
     numSongs = 0;
     vectorSize = 500000;
@@ -43,6 +45,6 @@ function numSongs = music(dataDirectory);
      end
 
      save('musicData','ng','ngVar','nsf','nsfVar');
-     sendmail('ahmad.asif@gmail.com', strcat(dataFolder,'-',num2str(numSongs),'/',num2str(numFiles)));
+ %    sendmail('ahmad.asif@gmail.com', strcat(dataFolder,'-',num2str(numSongs),'/',num2str(numFiles)));
 
 end
