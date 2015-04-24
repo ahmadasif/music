@@ -4,8 +4,11 @@ function numSongs = music(dataDirectory);
     addpath('~/Dropbox/work/snippets');
     addpath('~/Dropbox/work/InfoGeomCode');
 
+    currentFile = 'currentDataFile.mat';
+    allFile = 'allDataFile.mat';
+    
     numSongs = 0;
-    vectorSize = 500000;
+    vectorSize = 50000;
     vectorOffset = 1000000;
 
     fileList = rdir([strcat(dataDirectory), '/**/*.mp3']);
@@ -13,7 +16,7 @@ function numSongs = music(dataDirectory);
     numFiles = size(dataFiles,2);
 
     if (numFiles == 0)
-        error('No data files found');end
+        error('No music files found');end
     
     ng = NaN(numFiles,1);
     ngVar = NaN(numFiles,1);
@@ -25,12 +28,10 @@ function numSongs = music(dataDirectory);
     info = cell(numFiles,1);
     
     
-    figure(1);
-    hold on;
-    
     beginTime=progress('Initializing',0,0,0);
     for i = 1:numFiles,
         identifier=dataFiles{i};
+       
         fileID = fopen(identifier);
         timeSeries = fread(fileID,'uint8');
         fclose(fileID);
@@ -45,22 +46,43 @@ function numSongs = music(dataDirectory);
                 [nsf(i),nsfVar(i)] = nsf_new(normTimeSeries);  % Using sjr routines
                 [tag,message]=readid3(identifier);
                 numSongs = numSongs + 1;
+                [tag,message]=readid3(identifier);
+                info{numSongs} = strrep(identifier,strcat(dataDirectory,filesep),'');
+                genre{numSongs} = '';
+                if strcmp(message,'Success')
+                    artist{numSongs} = strtrim(tag.artist);
+                    song_name{numSongs} = strtrim(tag.song_name);
+                    genre{numSongs} = strtrim(tag.genre);
+                end
             end
         end
-        [tag,message]=readid3(identifier);
-        info{i} = strrep(identifier,strcat(dataDirectory,filesep),'');
-        genre{i} = '';
-        if strcmp(message,'Success')
-            artist{i} = strtrim(tag.artist);
-            song_name{i} = strtrim(tag.song_name);
-            info{i} = sprintf('%s - %s',artist{i},song_name{i}); 
-            genre{i} = strtrim(tag.genre);
-        end
-        
-        progress(info{i},i,numFiles,beginTime);
-     end
 
-     save('musicData','info','genre','ng','ngVar','nsf','nsfVar');
-     sendmail('ahmad.asif@gmail.com', fullfile(strcat(dataFolder,'-',num2str(numSongs)),num2str(numFiles)));
+        
+
+        
+        progress(sprintf('%s - %s',artist{numSongs},song_name{numSongs}),i,numFiles,beginTime);
+    end
+    
+    save(currentFile,'artist','song_name','genre','ng','ngVar','nsf','nsfVar');
+ 
+    if exist(allFile)==2
+        oldData = load(allFile);
+        currentData = load(currentFile);
+        theFields = fieldnames(currentData);
+        for j=1:length(theFields)
+            allData.(theFields{j}) = [oldData.(theFields{j});currentData.(theFields{j})];
+        end
+        save(allFile,'-struct','allData');
+    else
+        save(allFile,'artist','song_name','genre','ng','ngVar','nsf','nsfVar');
+    end
+        
+    
+    
+    
+
+
+     
+%     sendmail('ahmad.asif@gmail.com', fullfile(strcat(dataDirectory,'-',num2str(numSongs)),num2str(numFiles)));
 
 end
