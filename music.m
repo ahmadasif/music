@@ -1,14 +1,14 @@
-function numSongs = music(dataDirectory);
+function numSongs = music(dataDirectory,vectorSize);
 
-    addpath('~/Dropbox/work/common');
-    addpath('~/Dropbox/work/snippets');
-    addpath('~/Dropbox/work/InfoGeomCode');
+    addpath('~/work/common');
+    addpath('~/work/snippets');
+    addpath('~/work/InfoGeomCode');
 
-    currentFile = 'currentDataFile.mat';
-    allFile = 'allDataFile.mat';
+    currentFile = strcat('current',num2str(vectorSize),'.mat');
+    allFile = strcat('all',num2str(vectorSize),'.mat');
     
     numSongs = 0;
-    vectorSize = 50000;
+%     vectorSize = 50000;
     vectorOffset = 1000000;
 
     fileList = rdir([strcat(dataDirectory), '/**/*.mp3']);
@@ -77,7 +77,7 @@ function numSongs = music(dataDirectory);
         save(allFile,'artist','song_name','genre','ng','ngVar','nsf','nsfVar');
     end
         
-    
+    delete(currentFile);
     
     
 
