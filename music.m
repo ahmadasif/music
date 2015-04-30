@@ -1,8 +1,8 @@
 function numSongs = music(dataDirectory,vectorSize);
 
-    addpath('~/work/common');
-    addpath('~/work/snippets');
-    addpath('~/work/InfoGeomCode');
+    addpath('~/Dropbox/work/common');
+    addpath('~/Dropbox/work/snippets');
+    addpath('~/Dropbox/work/InfoGeomCode');
 
     currentFile = strcat('current',num2str(vectorSize),'.mat');
     allFile = strcat('all',num2str(vectorSize),'.mat');
